@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <form
+      action="http://localhost:5000/api/anuncios"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      <input type="text" name="marca" placeholder="Marca" /><br/>
+      <input type="text" name="modelo" placeholder="Modelo" /><br/>
+      <input type="file" name="fotos" multiple /><br/>
+      <button type="submit">Enviar</button>
+    </form>
+  </body>
+</html>
