@@ -1,8 +1,8 @@
-import Navbar from '../src/components/Navbar';
-import AnuncioForm from '../src/components/AnuncioForm';
+import Navbar from '../components/Navbar';
+import AnuncioForm from '../components/AnuncioForm';
 import { useState } from 'react';
-import AnuncioCard from '../src/components/AnuncioCard';
-import withAuth from '../src/hocs/withAuth';
+import AnuncioCard from '../components/AnuncioCard';
+import withAuth from '../hocs/withAuth';
 
 function Admin() {
   const [anuncios, setAnuncios] = useState([]);

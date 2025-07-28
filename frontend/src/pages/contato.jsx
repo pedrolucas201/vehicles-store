@@ -1,5 +1,5 @@
 // pages/contato.jsx
-import Navbar from "../src/components/Navbar";
+import Navbar from "../components/Navbar";
 import { useState } from "react";
 
 export default function Contato() {

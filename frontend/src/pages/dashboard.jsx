@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Navbar from "../src/components/Navbar";
-import api from "../src/services/api";
-import withAuth from "../src/hocs/withAuth";
+import Navbar from "../components/Navbar";
+import api from "../services/api";
+import withAuth from "../hocs/withAuth";
 
 function Dashboard() {
   const router = useRouter();
