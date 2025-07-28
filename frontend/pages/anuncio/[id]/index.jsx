@@ -2,7 +2,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Phone, ChevronLeft, ChevronRight } from "lucide-react";
-import api from "../../../services/api";
+import api from "../../../src/services/api";
 import Slider from "react-slick";
 
 import "slick-carousel/slick/slick.css";
