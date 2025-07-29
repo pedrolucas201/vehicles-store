@@ -4,9 +4,53 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import jwtDecode from "jwt-decode";
+import { ArrowLeft, Phone, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function Home() {
+
+  function PrevArrow({ className, style, onClick }) {
+    return (
+      <button
+        className={`${className} absolute top-1/2 left-2 transform -translate-y-1/2 z-10 bg-neutral-800/60 p-2 rounded-full`}
+        style={{ ...style }}
+        onClick={onClick}
+        aria-label="Anterior"
+      >
+        <ChevronLeft size={24} className="text-white" />
+      </button>
+    );
+  }
+  
+  function NextArrow({ className, style, onClick }) {
+    return (
+      <button
+        className={`${className} absolute top-1/2 right-2 transform -translate-y-1/2 z-10 bg-neutral-800/60 p-2 rounded-full`}
+        style={{ ...style }}
+        onClick={onClick}
+        aria-label="Próximo"
+      >
+        <ChevronRight size={24} className="text-white" />
+      </button>
+    );
+  }
+
+  const settings = {
+    dots: true,
+    arrows: true,
+    infinite: true,
+    speed: 400,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    adaptiveHeight: true,
+    prevArrow: <PrevArrow />,
+    nextArrow: <NextArrow />,
+  };
+
+  if (!anuncio) {
+    return <p className="text-white text-center mt-20">Carregando...</p>;
+  }
   const router = useRouter();
+  const [anuncio, setAnuncio] = useState(null);
   const [anuncios, setAnuncios] = useState([]);
   const [filtroMarca, setFiltroMarca] = useState("");
   const [filtroAno, setFiltroAno] = useState("");
@@ -57,6 +101,27 @@ export default function Home() {
   return (
     <>
       <Navbar />
+       {/* Carrossel com botões */}
+        {anuncio.fotos && anuncio.fotos.length > 0 ? (
+          <div className="relative mb-6">
+            <Slider {...settings}>
+              {anuncio.fotos.map((foto, i) => (
+                <div key={i}>
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_API_URL.replace('/api','')}${foto}`}
+                    alt={`Foto ${i + 1}`}
+                    className="w-full h-[500px] object-cover rounded-lg"
+                  />
+                </div>
+              ))}
+            </Slider>
+          </div>
+        ) : (
+          <div className="mb-6 p-6 bg-neutral-700 rounded text-center">
+            <p className="text-neutral-400">Sem fotos disponíveis</p>
+          </div>
+        )}
+
       <div className="container mx-auto p-6 text-white">
         <h1 className="text-3xl font-bold mb-4">Veículos Disponíveis</h1>
 
