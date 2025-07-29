@@ -3,6 +3,7 @@ import api from "../services/api";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import jwtDecode from "jwt-decode";
 
 export default function Home() {
   const router = useRouter();
@@ -13,6 +14,19 @@ export default function Home() {
 
   const [marcas, setMarcas] = useState([]);
   const [anos, setAnos] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const { role } = jwtDecode(token);
+        setIsAdmin(role === "admin");
+      } catch (err) {
+        console.warn("Token inválido:", err);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     api.get("/anuncios").then((res) => {
@@ -95,7 +109,9 @@ export default function Home() {
             >
               {a.fotos?.[0] && (
                 <img
-                  src={`${process.env.NEXT_PUBLIC_API_URL.replace('/api','')}${a.fotos[0]}`}
+                  src={`${process.env.NEXT_PUBLIC_API_URL.replace("/api", "")}${
+                    a.fotos[0]
+                  }`}
                   alt={a.modelo}
                   className="w-full h-48 object-cover"
                 />
@@ -114,7 +130,8 @@ export default function Home() {
                   {a.ano} • {a.km} KM
                 </p>
 
-                {jwt.decode(localStorage.getItem("token"))?.role === "admin" ? (
+                {/* 4) Só mostra edição/exclusão se for admin */}
+                {isAdmin && (
                   <div className="mt-4 flex justify-between text-sm">
                     <button
                       className="text-white-400 hover:text-yellow-200"
@@ -125,10 +142,14 @@ export default function Home() {
                     <button
                       className="text-white-400 hover:text-red-200"
                       onClick={async () => {
-                        if (confirm("Tem certeza que deseja excluir?")) {
+                        if (
+                          confirm(
+                            "Tem certeza que deseja excluir este anúncio?"
+                          )
+                        ) {
                           await api.delete(`/anuncios/${a._id}`);
-                          setAnuncios(
-                            anuncios.filter((item) => item._id !== a._id)
+                          setAnuncios((prev) =>
+                            prev.filter((item) => item._id !== a._id)
                           );
                         }
                       }}
@@ -136,7 +157,7 @@ export default function Home() {
                       Excluir
                     </button>
                   </div>
-                ) : null}
+                )}
 
                 <div className="mt-4 flex justify-between text-sm">
                   <Link
