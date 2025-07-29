@@ -90,7 +90,7 @@ export default function AnuncioDetalhe() {
               {anuncio.fotos.map((foto, i) => (
                 <div key={i}>
                   <img
-                    src={`http://localhost:5000${foto}`}
+                    src={`${process.env.NEXT_PUBLIC_API_URL.replace('/api','')}${foto}`}
                     alt={`Foto ${i + 1}`}
                     className="w-full h-[500px] object-cover rounded-lg"
                   />

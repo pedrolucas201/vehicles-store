@@ -95,7 +95,7 @@ export default function Home() {
             >
               {a.fotos?.[0] && (
                 <img
-                  src={`http://localhost:5000${a.fotos[0]}`}
+                  src={`${process.env.NEXT_PUBLIC_API_URL.replace('/api','')}${a.fotos[0]}`}
                   alt={a.modelo}
                   className="w-full h-48 object-cover"
                 />
@@ -114,6 +114,30 @@ export default function Home() {
                   {a.ano} • {a.km} KM
                 </p>
 
+                {jwt.decode(localStorage.getItem("token"))?.role === "admin" ? (
+                  <div className="mt-4 flex justify-between text-sm">
+                    <button
+                      className="text-white-400 hover:text-yellow-200"
+                      onClick={() => router.push(`/anuncio/${a._id}/editar`)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="text-white-400 hover:text-red-200"
+                      onClick={async () => {
+                        if (confirm("Tem certeza que deseja excluir?")) {
+                          await api.delete(`/anuncios/${a._id}`);
+                          setAnuncios(
+                            anuncios.filter((item) => item._id !== a._id)
+                          );
+                        }
+                      }}
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                ) : null}
+
                 <div className="mt-4 flex justify-between text-sm">
                   <Link
                     href={`/anuncio/${a._id}`}
@@ -121,25 +145,6 @@ export default function Home() {
                   >
                     Ver
                   </Link>
-                  <button
-                    className="text-white-400 hover:text-yellow-200"
-                    onClick={() => router.push(`/anuncio/${a._id}/editar`)}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    className="text-white-400 hover:text-red-200"
-                    onClick={async () => {
-                      if (confirm("Tem certeza que deseja excluir?")) {
-                        await api.delete(`/anuncios/${a._id}`);
-                        setAnuncios(
-                          anuncios.filter((item) => item._id !== a._id)
-                        );
-                      }
-                    }}
-                  >
-                    Excluir
-                  </button>
                 </div>
               </div>
             </div>

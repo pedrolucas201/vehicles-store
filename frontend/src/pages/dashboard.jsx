@@ -98,7 +98,7 @@ function Dashboard() {
             >
               {a.fotos?.[0] && (
                 <img
-                  src={`http://localhost:5000${a.fotos[0]}`}
+                  src={`${process.env.NEXT_PUBLIC_API_URL.replace('/api','')}${a.fotos[0]}`}
                   alt={a.modelo}
                   className="w-full h-48 object-cover"
                 />

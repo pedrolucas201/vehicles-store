@@ -126,7 +126,7 @@ function EditarAnuncio() {
             return (
               <img
                 key={foto}
-                src={`http://localhost:5000${foto}`}
+                src={`${process.env.NEXT_PUBLIC_API_URL.replace('/api','')}${foto}`}
                 alt=""
                 className={`h-32 w-32 object-cover rounded cursor-pointer transition-opacity ${
                   removida ? "opacity-30 grayscale" : "opacity-100"
