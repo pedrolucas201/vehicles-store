@@ -3,8 +3,9 @@ import api from "../services/api";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import jwtDecode from "jwt-decode";
-import { ArrowLeft, Phone, ChevronLeft, ChevronRight } from "lucide-react";
+import { jwtDecode } from 'jwt-decode';
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import Slider from "react-slick";
 
 export default function Home() {
 
