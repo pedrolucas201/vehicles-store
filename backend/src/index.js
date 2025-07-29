@@ -12,8 +12,6 @@ const anunciosRoutes = require('./routes/anuncios');
 const uploadRoutes = require('./routes/upload');
 
 const app = express();
-app.get('/ping', (req, res) => res.send('pong'));
-
 app.use(cors());
 // Permitir apenas o domínio do seu front
 app.use(cors({
@@ -22,6 +20,9 @@ app.use(cors({
     credentials: true  // se você usa cookies/sessions
   }));
 app.use(express.json());
+
+app.get('/ping', (req, res) => res.send('pong'));
+app.get('/', (req, res) => res.send('API is running'));
 
 app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
 
