@@ -13,6 +13,12 @@ const uploadRoutes = require('./routes/upload');
 
 const app = express();
 app.use(cors());
+// Permitir apenas o domínio do seu front
+app.use(cors({
+    origin: 'https://uniao-motos.vercel.app',
+    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+    credentials: true  // se você usa cookies/sessions
+  }));
 app.use(express.json());
 
 app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
