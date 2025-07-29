@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import api from "../../../src/services/api";
+import api from "../../../services/api";
 import { ArrowLeft } from "lucide-react";
 import ImageUpload from "../../../components/ImageUpload";
 import withAuth from "../../../hocs/withAuth";

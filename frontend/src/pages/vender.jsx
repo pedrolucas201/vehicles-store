@@ -1,8 +1,8 @@
 // pages/vender.jsx
-import Navbar from "../src/components/Navbar";
-import ImageUpload from "../src/components/ImageUpload";
+import Navbar from "../components/Navbar";
+import ImageUpload from "../components/ImageUpload";
 import { useState } from "react";
-import api from "../src/services/api";
+import api from "../services/api";
 
 export default function Vender() {
   const [form, setForm] = useState({
