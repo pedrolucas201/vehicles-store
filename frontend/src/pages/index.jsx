@@ -3,9 +3,11 @@ import api from "../services/api";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { jwtDecode } from 'jwt-decode';
+import jwtDecode  from 'jwt-decode';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 export default function Home() {
 
@@ -47,11 +49,8 @@ export default function Home() {
     nextArrow: <NextArrow />,
   };
 
-  if (!anuncio) {
-    return <p className="text-white text-center mt-20">Carregando...</p>;
-  }
+ 
   const router = useRouter();
-  const [anuncio, setAnuncio] = useState(null);
   const [anuncios, setAnuncios] = useState([]);
   const [filtroMarca, setFiltroMarca] = useState("");
   const [filtroAno, setFiltroAno] = useState("");
@@ -87,6 +86,11 @@ export default function Home() {
     });
   }, []);
 
+    const slides = anuncios
+    .flatMap((a) => a.fotos || [])
+    .filter(Boolean)
+    .slice(0, 5);
+
   // Aplicar os filtros
   const anunciosFiltrados = anuncios.filter((a) => {
     return (
@@ -103,25 +107,19 @@ export default function Home() {
     <>
       <Navbar />
        {/* Carrossel com botões */}
-        {anuncio.fotos && anuncio.fotos.length > 0 ? (
-          <div className="relative mb-6">
-            <Slider {...settings}>
-              {anuncio.fotos.map((foto, i) => (
-                <div key={i}>
-                  <img
-                    src={`${process.env.NEXT_PUBLIC_API_URL.replace('/api','')}${foto}`}
-                    alt={`Foto ${i + 1}`}
-                    className="w-full h-[500px] object-cover rounded-lg"
-                  />
-                </div>
-              ))}
-            </Slider>
-          </div>
-        ) : (
-          <div className="mb-6 p-6 bg-neutral-700 rounded text-center">
-            <p className="text-neutral-400">Sem fotos disponíveis</p>
-          </div>
-        )}
+       <div className="relative mb-6">
+        <Slider {...settings}>
+          {slides.map((foto, i) => (
+            <div key={i}>
+              <img
+                src={`${process.env.NEXT_PUBLIC_API_URL.replace("/api", "")}${foto}`}
+                alt={`Anúncio slide ${i + 1}`}
+                className="w-full h-[400px] object-cover rounded-lg"
+              />
+            </div>
+          ))}
+        </Slider>
+      </div>
 
       <div className="container mx-auto p-6 text-white">
         <h1 className="text-3xl font-bold mb-4">Veículos Disponíveis</h1>
