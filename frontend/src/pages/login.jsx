@@ -1,27 +1,39 @@
+// pages/login.jsx (ou onde seu componente de login estiver localizado)
 import { useState } from "react";
 import { useRouter } from "next/router";
-import api from "../services/api";
+import api from "../services/api"; // Seu Axios instance
+import { useAuth } from "../contexts/AuthContext"; // Importe o useAuth do seu AuthContext
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { login } = useAuth(); // <--- Obtenha a função 'login' do seu AuthContext
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await api.post("/auth/login", { email, password });
-      localStorage.setItem("token", res.data.token);
-      router.push("/dashboard");
-    } catch {
-      alert("Erro no login");
+      const { token } = res.data; // <--- Extraia o token da resposta
+
+      localStorage.setItem("token", token); // <-- Linha que salva
+      console.log("Token salvo no localStorage:", token); // <-- Adicione este log
+      console.log("Estado atual do localStorage:", localStorage.getItem("token")); // <-- E este
+  
+
+      login(token); // <--- Chame a função 'login' do AuthContext, passando o token
+
+      router.push("/dashboard"); // Redireciona para o dashboard após o login
+    } catch (error) { // <--- É uma boa prática capturar o erro para depuração
+      console.error("Erro no login:", error);
+      alert("Erro no login: Credenciais inválidas ou problema de conexão.");
     }
   };
 
   return (
     <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold mb-6 text-center">União Motos</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">União Motos</h1> {/* Adicionei text-white */}
         <form onSubmit={handleSubmit}>
           <label className="block mb-2 text-sm text-neutral-300">Email</label>
           <input
@@ -29,7 +41,7 @@ export default function Login() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 mb-4 bg-neutral-700 border border-neutral-600 rounded focus:outline-none focus:border-brand-500"
+            className="w-full px-4 py-2 mb-4 bg-neutral-700 border border-neutral-600 rounded text-white placeholder-neutral-400 focus:outline-none focus:border-brand-500" // Adicionei text-white e placeholder
           />
           <label className="block mb-2 text-sm text-neutral-300">Senha</label>
           <input
@@ -37,7 +49,7 @@ export default function Login() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 mb-6 bg-neutral-700 border border-neutral-600 rounded focus:outline-none focus:border-brand-500"
+            className="w-full px-4 py-2 mb-6 bg-neutral-700 border border-neutral-600 rounded text-white placeholder-neutral-400 focus:outline-none focus:border-brand-500" // Adicionei text-white e placeholder
           />
           <button
             type="submit"

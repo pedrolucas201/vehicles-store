@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Navbar from "../components/Navbar";
 import api from "../services/api";
 import withAuth from "../hocs/withAuth";
 
@@ -16,20 +15,37 @@ function Dashboard() {
   const [anos, setAnos] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return router.push("/login");
+    async function fetchAnuncios() {
+      const token = localStorage.getItem("token");
 
-    api.defaults.headers.Authorization = `Bearer ${token}`;
-    api.get("/anuncios").then((res) => {
-      setAnuncios(res.data);
+      if (!token) {
+        console.log("Dashboard: Token ausente, redirecionando para /login.");
+        router.push("/login");
+        return;
+      }
 
-      // Pegar marcas e anos únicos para os filtros
-      const marcasUnicas = [...new Set(res.data.map((a) => a.marca))];
-      const anosUnicos = [...new Set(res.data.map((a) => a.ano))].sort((a, b) => b - a);
-      setMarcas(marcasUnicas);
-      setAnos(anosUnicos);
-    });
-  }, []);
+      api.defaults.headers.Authorization = `Bearer ${token}`;
+      try {
+        const res = await api.get("/anuncios"); // Use await aqui
+        setAnuncios(res.data);
+
+        const marcasUnicas = [...new Set(res.data.map((a) => a.marca))];
+        const anosUnicos = [...new Set(res.data.map((a) => a.ano))].sort((a, b) => b - a);
+        setMarcas(marcasUnicas);
+        setAnos(anosUnicos);
+        console.log("Dashboard: Anúncios carregados com sucesso.");
+      } catch (error) {
+        console.error("Dashboard: Erro ao carregar anúncios:", error);
+        if (error.response && error.response.status === 401) { 
+          localStorage.removeItem('token'); 
+          router.push("/login"); 
+        }
+      }
+    }
+
+    fetchAnuncios();
+
+  }, []); 
 
   // Aplicar os filtros
   const anunciosFiltrados = anuncios.filter((a) => {
@@ -45,7 +61,6 @@ function Dashboard() {
 
   return (
     <>
-      <Navbar />
       <div className="container mx-auto p-6 text-white">
         <h1 className="text-3xl font-bold mb-4">Veículos Disponíveis</h1>
 

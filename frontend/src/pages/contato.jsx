@@ -1,5 +1,4 @@
 // pages/contato.jsx
-import Navbar from "../components/Navbar";
 import { useState } from "react";
 
 export default function Contato() {
@@ -18,7 +17,6 @@ export default function Contato() {
     // Renderiza o formulário de contato
   return (
     <>
-      <Navbar />
       <div className="container mx-auto py-8 px-4 text-white">
         <h1 className="text-3xl font-bold mb-6">Contato</h1>
         <form onSubmit={handleSubmit} className="bg-neutral-800 p-6 rounded-lg space-y-4">

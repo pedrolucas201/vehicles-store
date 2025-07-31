@@ -1,9 +1,8 @@
 // pages/quemsomos.jsx
-import Navbar from "../components/Navbar";
 export default function QuemSomos() {
+  
   return (
     <>
-      <Navbar />
       <div className="container mx-auto py-8 px-4 text-white">
         <h1 className="text-3xl font-bold mb-4">Quem Somos</h1>
         <p className="mb-4">

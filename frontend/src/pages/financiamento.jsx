@@ -1,5 +1,4 @@
 // pages/financiamento.jsx
-import Navbar from "../components/Navbar";
 import { useState } from "react";
 
 export default function Financiamento() {
@@ -10,7 +9,6 @@ export default function Financiamento() {
 
   return (
     <>
-      <Navbar />
       <div className="container mx-auto py-8 px-4 text-white">
         <h1 className="text-3xl font-bold mb-6">Simulação de Financiamento</h1>
         <form className="bg-neutral-800 p-6 rounded-lg space-y-4">

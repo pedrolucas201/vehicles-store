@@ -1,5 +1,4 @@
 // pages/vender.jsx
-import Navbar from "../components/Navbar";
 import ImageUpload from "../components/ImageUpload";
 import { useState } from "react";
 import api from "../services/api";
@@ -25,7 +24,6 @@ export default function Vender() {
 
   return (
     <>
-      <Navbar />
       <div className="container mx-auto py-8 px-4 text-white">
         <h1 className="text-3xl font-bold mb-6">Venda seu veículo</h1>
         <form

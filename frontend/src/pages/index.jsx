@@ -1,245 +1,228 @@
-import Navbar from "../components/Navbar";
+// pages/index.js
+
+import { useState, useEffect, useMemo } from "react";
 import api from "../services/api";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import jwtDecode  from 'jwt-decode';
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+
+// Components
+import AnuncioCard from "../components/AnuncioCard";
+import Carrossel from "../components/Carrossel";
+import Filtros from "../components/Filtros"; 
+import { useTheme } from "@chakra-ui/react";
+import { useAuth } from "../hooks/useAuth";
+
+// Hooks
 
 export default function Home() {
 
-  function PrevArrow({ className, style, onClick }) {
-    return (
-      <button
-        className={`${className} absolute top-1/2 left-2 transform -translate-y-1/2 z-10 bg-neutral-800/60 p-2 rounded-full`}
-        style={{ ...style }}
-        onClick={onClick}
-        aria-label="Anterior"
-      >
-        <ChevronLeft size={24} className="text-white" />
-      </button>
-    );
-  }
-  
-  function NextArrow({ className, style, onClick }) {
-    return (
-      <button
-        className={`${className} absolute top-1/2 right-2 transform -translate-y-1/2 z-10 bg-neutral-800/60 p-2 rounded-full`}
-        style={{ ...style }}
-        onClick={onClick}
-        aria-label="Próximo"
-      >
-        <ChevronRight size={24} className="text-white" />
-      </button>
-    );
+  try {
+    const theme = useTheme();
+    console.log("Chakra UI Theme loaded successfully:", theme);
+  } catch (e) {
+    console.error("Failed to load Chakra UI Theme in Home:", e);
   }
 
-  const settings = {
-    dots: true,
-    arrows: true,
-    infinite: true,
-    speed: 400,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    adaptiveHeight: true,
-    prevArrow: <PrevArrow />,
-    nextArrow: <NextArrow />,
-  };
-
- 
-  const router = useRouter();
-  const [anuncios, setAnuncios] = useState([]);
-  const [filtroMarca, setFiltroMarca] = useState("");
-  const [filtroAno, setFiltroAno] = useState("");
-  const [filtroPreco, setFiltroPreco] = useState("");
-
+  const [anuncios, setAnuncios] = useState([]); // Todos os anúncios carregados da API
   const [marcas, setMarcas] = useState([]);
   const [anos, setAnos] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false);
 
+  // Estados dos filtros
+  const [filtroMarca, setFiltroMarca] = useState("");
+  const [filtroAno, setFiltroAno] = useState("");
+  // ALTERAÇÃO: Remover filtroPreco, adicionar filtroPrecoMin e filtroPrecoMax
+  const [filtroPrecoMin, setFiltroPrecoMin] = useState(""); // Estado para o preço mínimo selecionado no slider
+  const [filtroPrecoMax, setFiltroPrecoMax] = useState(""); // Estado para o preço máximo selecionado no slider
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Estados de controle da UI
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const isAdmin = useAuth;
+
+  // Valores globais de preço para o slider (min e max de todos os anúncios)
+  // Usamos useMemo para garantir que eles sejam calculados apenas quando 'anuncios' muda.
+  const minPrecoGlobal = useMemo(() => {
+    if (anuncios.length === 0) return 0; // Ou um valor padrão razoável
+    return Math.min(...anuncios.map((a) => a.preco));
+  }, [anuncios]);
+
+  const maxPrecoGlobal = useMemo(() => {
+    if (anuncios.length === 0) return 100000; // Ou um valor padrão razoável, maior que o esperado
+    return Math.max(...anuncios.map((a) => a.preco));
+  }, [anuncios]);
+
+  // Efeito para buscar os dados da API
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    const fetchData = async () => {
       try {
-        const { role } = jwtDecode(token);
-        setIsAdmin(role === "admin");
+        setLoading(true);
+        const res = await api.get("/anuncios");
+        const fetchedAnuncios = res.data;
+        setAnuncios(fetchedAnuncios);
+
+        // Extrai marcas e anos únicos para os filtros
+        const marcasUnicas = [...new Set(fetchedAnuncios.map((a) => a.marca))].sort();
+        const anosUnicos = [...new Set(fetchedAnuncios.map((a) => a.ano))].sort(
+          (a, b) => b - a
+        );
+        setMarcas(marcasUnicas);
+        setAnos(anosUnicos);
+
+        // ALTERAÇÃO: Inicializar os filtros de preço com os valores globais após carregar os anúncios
+        // Isso garante que o slider comece na faixa completa
+        if (fetchedAnuncios.length > 0) {
+          const initialMinPrice = Math.min(...fetchedAnuncios.map((a) => a.preco));
+          const initialMaxPrice = Math.max(...fetchedAnuncios.map((a) => a.preco));
+          setFiltroPrecoMin(initialMinPrice.toString());
+          setFiltroPrecoMax(initialMaxPrice.toString());
+        } else {
+          setFiltroPrecoMin("0"); // Se não houver anúncios, defina um padrão
+          setFiltroPrecoMax("100000"); // Se não houver anúncios, defina um padrão
+        }
+
       } catch (err) {
-        console.warn("Token inválido:", err);
+        console.error("Falha ao buscar anúncios:", err);
+        setError(
+          "Não foi possível carregar os veículos. Tente novamente mais tarde."
+        );
+      } finally {
+        setLoading(false);
       }
-    }
-  }, []);
+    };
+    fetchData();
+  }, []); // Dependência vazia para executar apenas uma vez na montagem
 
-  useEffect(() => {
-    api.get("/anuncios").then((res) => {
-      setAnuncios(res.data);
+  // Memoiza a lista de anúncios filtrados para evitar recálculos desnecessários
+  const anunciosFiltrados = useMemo(() => {
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-      // Pegar marcas e anos únicos para os filtros
-      const marcasUnicas = [...new Set(res.data.map((a) => a.marca))];
-      const anosUnicos = [...new Set(res.data.map((a) => a.ano))].sort(
-        (a, b) => b - a
-      );
-      setMarcas(marcasUnicas);
-      setAnos(anosUnicos);
+    return anuncios.filter((a) => {
+      const passaMarca = !filtroMarca || a.marca === filtroMarca;
+      const passaAno = !filtroAno || a.ano === parseInt(filtroAno, 10);
+
+      // ALTERAÇÃO: Lógica de filtragem de preço para usar min/max do slider
+      const min = parseFloat(filtroPrecoMin);
+      const max = parseFloat(filtroPrecoMax);
+
+      const passaPreco =
+        (isNaN(min) || a.preco >= min) && (isNaN(max) || a.preco <= max);
+
+      // Nova condição para o termo de pesquisa
+      const passaPesquisa =
+        !lowerCaseSearchTerm || // Se o termo de pesquisa estiver vazio, passa
+        a.modelo.toLowerCase().includes(lowerCaseSearchTerm) ||
+        a.marca.toLowerCase().includes(lowerCaseSearchTerm) ||
+        a.ano.toString().includes(lowerCaseSearchTerm); // Converter ano para string para incluir
+
+      return passaMarca && passaAno && passaPreco && passaPesquisa;
     });
-  }, []);
+  }, [anuncios, filtroMarca, filtroAno, filtroPrecoMin, filtroPrecoMax, searchTerm]);
+  // ALTERAÇÃO: Adicionar filtroPrecoMin e filtroPrecoMax como dependências do useMemo
 
-    const slides = anuncios
-    .flatMap((a) => a.fotos || [])
-    .filter(Boolean)
-    .slice(0, 5);
-
-  // Aplicar os filtros
-  const anunciosFiltrados = anuncios.filter((a) => {
-    return (
-      (!filtroMarca || a.marca === filtroMarca) &&
-      (!filtroAno || a.ano === parseInt(filtroAno)) &&
-      (!filtroPreco ||
-        (filtroPreco === "1" && a.preco < 10000) ||
-        (filtroPreco === "2" && a.preco >= 10000 && a.preco <= 20000) ||
-        (filtroPreco === "3" && a.preco > 20000))
+  // Função para remover um anúncio da lista sem recarregar a página
+  const handleAnuncioExcluido = (idExcluido) => {
+    setAnuncios((prevAnuncios) =>
+      prevAnuncios.filter((a) => a._id !== idExcluido)
     );
-  });
+  };
+
+  const slides = useMemo(() => {
+    if (anuncios.length === 0) {
+      return [];
+    }
+
+    return anuncios
+      .slice(0, 5)
+      .map((anuncio) => {
+        const imagePath =
+          anuncio.fotos && anuncio.fotos.length > 0 ? anuncio.fotos[0] : null;
+
+        const fullImageUrl = imagePath
+          ? `${process.env.NEXT_PUBLIC_UPLOAD_URL}${imagePath}`
+          : "/placeholder.jpg";
+
+        if (typeof fullImageUrl !== "string") {
+          console.error(
+            "Constructed image URL is not a string:",
+            fullImageUrl,
+            "from anuncio:",
+            anuncio
+          );
+          return null;
+        }
+
+        return {
+          id: anuncio._id,
+          image: fullImageUrl,
+          title: anuncio.modelo || "Veículo",
+          description: `Ano: ${
+            anuncio.ano
+          } - Preço: R$ ${anuncio.preco.toLocaleString("pt-BR")}`,
+          link: `/anuncio/${anuncio._id}`,
+        };
+      })
+      .filter(Boolean);
+  }, [anuncios]);
 
   return (
     <>
-      <Navbar />
-       {/* Carrossel com botões */}
-       <div className="relative mb-6">
-        <Slider {...settings}>
-          {slides.map((foto, i) => (
-            <div key={i}>
-              <img
-                src={`${process.env.NEXT_PUBLIC_API_URL.replace("/api", "")}${foto}`}
-                alt={`Anúncio slide ${i + 1}`}
-                className="w-full h-[400px] object-cover rounded-lg"
-              />
-            </div>
-          ))}
-        </Slider>
-      </div>
+      {slides.length > 0 && <Carrossel slides={slides} />}
 
       <div className="container mx-auto p-6 text-white">
         <h1 className="text-3xl font-bold mb-4">Veículos Disponíveis</h1>
 
-        {/* Filtros */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <select
-            className="p-2 bg-neutral-800 rounded text-white"
-            value={filtroMarca}
-            onChange={(e) => setFiltroMarca(e.target.value)}
-          >
-            <option value="">Todas as marcas</option>
-            {marcas.map((marca) => (
-              <option key={marca} value={marca}>
-                {marca}
-              </option>
-            ))}
-          </select>
-
-          <select
-            className="p-2 bg-neutral-800 rounded text-white"
-            value={filtroAno}
-            onChange={(e) => setFiltroAno(e.target.value)}
-          >
-            <option value="">Todos os anos</option>
-            {anos.map((ano) => (
-              <option key={ano} value={ano}>
-                {ano}
-              </option>
-            ))}
-          </select>
-
-          <select
-            className="p-2 bg-neutral-800 rounded text-white"
-            value={filtroPreco}
-            onChange={(e) => setFiltroPreco(e.target.value)}
-          >
-            <option value="">Todos os preços</option>
-            <option value="1">Até R$ 10.000</option>
-            <option value="2">R$ 10.000 a R$ 20.000</option>
-            <option value="3">Acima de R$ 20.000</option>
-          </select>
+        {/* Input de Pesquisa */}
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Pesquisar por modelo, marca ou ano..."
+            className="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
 
-        {/* Cards dos anúncios */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {anunciosFiltrados.map((a) => (
-            <div
-              key={a._id}
-              className="bg-neutral-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-            >
-              {a.fotos?.[0] && (
-                <img
-                  src={`${process.env.NEXT_PUBLIC_API_URL.replace("/api", "")}${
-                    a.fotos[0]
-                  }`}
-                  alt={a.modelo}
-                  className="w-full h-48 object-cover"
-                />
-              )}
-              <div className="p-4">
-                <h2 className="text-xl font-semibold">
-                  {a.marca} {a.modelo}
-                </h2>
-                <p className="text-brand-400 mt-1 text-lg font-bold">
-                  {a.preco.toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
-                </p>
-                <p className="text-sm text-neutral-400 mt-1">
-                  {a.ano} • {a.km} KM
-                </p>
+        {/* Aqui entraria o componente de Filtros */}
+        {
+          <Filtros
+            marcas={marcas}
+            anos={anos}
+            setFiltroMarca={setFiltroMarca}
+            setFiltroAno={setFiltroAno}
+            // ALTERAÇÃO: Passar novos props para o slider de preço
+            filtroPrecoMin={filtroPrecoMin}
+            setFiltroPrecoMin={setFiltroPrecoMin}
+            filtroPrecoMax={filtroPrecoMax}
+            setFiltroPrecoMax={setFiltroPrecoMax}
+            minPrecoGlobal={minPrecoGlobal}
+            maxPrecoGlobal={maxPrecoGlobal}
+          />
+        }
 
-                {/* 4) Só mostra edição/exclusão se for admin */}
-                {isAdmin && (
-                  <div className="mt-4 flex justify-between text-sm">
-                    <button
-                      className="text-white-400 hover:text-yellow-200"
-                      onClick={() => router.push(`/anuncio/${a._id}/editar`)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="text-white-400 hover:text-red-200"
-                      onClick={async () => {
-                        if (
-                          confirm(
-                            "Tem certeza que deseja excluir este anúncio?"
-                          )
-                        ) {
-                          await api.delete(`/anuncios/${a._id}`);
-                          setAnuncios((prev) =>
-                            prev.filter((item) => item._id !== a._id)
-                          );
-                        }
-                      }}
-                    >
-                      Excluir
-                    </button>
-                  </div>
-                )}
 
-                <div className="mt-4 flex justify-between text-sm">
-                  <Link
-                    href={`/anuncio/${a._id}`}
-                    className="text-white-400 hover:text-blue-200"
-                  >
-                    Ver
-                  </Link>
-                </div>
+        {loading && <p className="text-center mt-10">Carregando veículos...</p>}
+
+        {error && <p className="text-center mt-10 text-red-500">{error}</p>}
+
+        {!loading && !error && (
+          <>
+          {console.log("É admin?", isAdmin)}
+            {anunciosFiltrados.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+                {anunciosFiltrados.map((anuncio) => (
+                  <AnuncioCard
+                    key={anuncio._id}
+                    anuncio={anuncio}
+                    isAdmin={isAdmin}
+                    onAnuncioExcluido={handleAnuncioExcluido}
+                  />
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
-
-        {anunciosFiltrados.length === 0 && (
-          <p className="text-neutral-400 mt-10">
-            Nenhum veículo encontrado com os filtros aplicados.
-          </p>
+            ) : (
+              <p className="text-neutral-400 mt-10 text-center">
+                Nenhum veículo encontrado com os filtros aplicados.
+              </p>
+            )}
+          </>
         )}
       </div>
     </>

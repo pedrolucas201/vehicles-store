@@ -1,4 +1,3 @@
-import Navbar from '../components/Navbar';
 import AnuncioForm from '../components/AnuncioForm';
 import { useState } from 'react';
 import AnuncioCard from '../components/AnuncioCard';
@@ -9,7 +8,6 @@ function Admin() {
 
   return (
     <>
-      <Navbar />
       <div className="container mx-auto p-6 space-y-8">
         <h2 className="text-2xl font-bold text-white">Criar anúncio</h2>
         <AnuncioForm onCreated={n=>setAnuncios([n, ...anuncios])} />

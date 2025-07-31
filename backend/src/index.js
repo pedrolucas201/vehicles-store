@@ -13,12 +13,28 @@ const uploadRoutes = require('./routes/upload');
 
 const app = express();
 app.use(cors());
-// Permitir apenas o domínio do seu front
+
+// Lista branca de origins
+const allowedOrigins = [
+  'https://uniao-motos.vercel.app',
+  'https://uniao-motos.onrender.com',    // seu domínio de API
+  'http://localhost:3000',               // front em dev
+  'http://127.0.0.1:3000'
+];
+
 app.use(cors({
-    origin: 'https://uniao-motos.vercel.app',
-    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-    credentials: true  // se você usa cookies/sessions
-  }));
+  origin: (origin, callback) => {
+    // permitir chamadas sem origin (Postman, servidores, mobile)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS Bloqueado para origem ${origin}`));
+  },
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  credentials: true
+}));
+
 app.use(express.json());
 
 app.get('/ping', (req, res) => res.send('pong'));

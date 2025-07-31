@@ -90,7 +90,10 @@ export default function AnuncioDetalhe() {
               {anuncio.fotos.map((foto, i) => (
                 <div key={i}>
                   <img
-                    src={`${process.env.NEXT_PUBLIC_API_URL.replace('/api','')}${foto}`}
+                    src={`${process.env.NEXT_PUBLIC_API_URL.replace(
+                      "/api",
+                      ""
+                    )}${foto}`}
                     alt={`Foto ${i + 1}`}
                     className="w-full h-[500px] object-cover rounded-lg"
                   />
@@ -140,9 +143,14 @@ export default function AnuncioDetalhe() {
             {anuncio.descricao}
           </p>
           <button
-            onClick={() =>
-              window.open(`https://wa.me/${anuncio.whatsapp}`, "_blank")
-            }
+            onClick={(e) => {
+              e.preventDefault();
+              const mensagem = `Olá, estou interessado em saber mais sobre ${anuncio.marca} ${anuncio.modelo}`;
+              const whatsapp = `https://api.whatsapp.com/send?phone=${anuncio.whatsapp}&text=${encodeURIComponent(
+                mensagem
+              )}`;
+              window.open(whatsapp, "_blank");
+            }}
             className="w-full py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-full font-semibold flex items-center justify-center"
           >
             <Phone className="mr-2" size={18} /> Falar no WhatsApp

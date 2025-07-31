@@ -1,5 +1,4 @@
 // pages/estoque.jsx
-import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import Link from "next/link";
@@ -27,7 +26,6 @@ export default function Estoque() {
 
   return (
     <>
-      <Navbar />
       <div className="container mx-auto px-4 py-6 lg:grid lg:grid-cols-4 gap-6">
         {/* sidebar */}
         <aside className="bg-neutral-800 p-4 rounded-lg text-white lg:block hidden">
