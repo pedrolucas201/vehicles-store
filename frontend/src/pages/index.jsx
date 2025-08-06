@@ -171,7 +171,7 @@ export default function Home() {
           <input
             type="text"
             placeholder="Pesquisar por modelo, marca ou ano..."
-            className="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

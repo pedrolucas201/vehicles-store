@@ -10,8 +10,7 @@ import {
   Tooltip,
   Flex,
   Text,
-  Input,
-  NumberInput, // Para os campos de min/max diretos
+  NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
@@ -27,29 +26,26 @@ const Filtros = ({
   setFiltroPrecoMin,
   filtroPrecoMax,
   setFiltroPrecoMax,
-  minPrecoGlobal, // Recebido da Home
-  maxPrecoGlobal, // Recebido da Home
+  minPrecoGlobal,
+  maxPrecoGlobal,
 }) => {
   const [showTooltipMin, setShowTooltipMin] = React.useState(false);
   const [showTooltipMax, setShowTooltipMax] = React.useState(false);
 
-  // Certificar que os valores são números para o slider
   const currentMinPrice = parseFloat(filtroPrecoMin);
   const currentMaxPrice = parseFloat(filtroPrecoMax);
 
-  // Handlers para o Chakra RangeSlider
   const handlePriceChange = (newValues) => {
     setFiltroPrecoMin(newValues[0].toString());
     setFiltroPrecoMax(newValues[1].toString());
   };
 
-  // Função para formatar o valor do preço para exibição no tooltip
   const formatPrice = (value) => {
     return `R$ ${parseFloat(value).toLocaleString('pt-BR')}`;
   };
 
   return (
-    <Box className="bg-black-700 p-6 rounded-lg shadow-lg mb-8">
+    <Box bg="black.700" p={6} rounded="lg" shadow="lg" mb={8}>
       <h2 className="text-xl font-semibold text-white mb-4">Filtrar Veículos</h2>
 
       <Flex direction={{ base: "column", md: "row" }} gap={4} mb={6}>
@@ -59,8 +55,11 @@ const Filtros = ({
           <Select
             placeholder="Todas as marcas"
             onChange={(e) => setFiltroMarca(e.target.value)}
-            className="bg-gray-700 text-white border-gray-600 hover:border-red-500 focus:ring-red-500 focus:border-red-500"
+            bg="gray.700"
             color="white"
+            borderColor="gray.600"
+            _hover={{ borderColor: 'red.500' }}
+            _focus={{ borderColor: 'red.500', boxShadow: '0 0 0 1px #E53E3E' }}
             _placeholder={{ color: 'gray.400' }}
           >
             {marcas.map((marca) => (
@@ -77,8 +76,11 @@ const Filtros = ({
           <Select
             placeholder="Todos os anos"
             onChange={(e) => setFiltroAno(e.target.value)}
-            className="bg-gray-700 text-white border-gray-600 hover:border-red-500 focus:ring-red-500 focus:border-red-500"
+            bg="gray.700"
             color="white"
+            borderColor="gray.600"
+            _hover={{ borderColor: 'red.500' }}
+            _focus={{ borderColor: 'red.500', boxShadow: '0 0 0 1px #E53E3E' }}
             _placeholder={{ color: 'gray.400' }}
           >
             {anos.map((ano) => (
@@ -96,15 +98,18 @@ const Filtros = ({
         <Flex align="center" gap={4}>
           {/* Input para Preço Mínimo */}
           <NumberInput
-            value={formatPrice(filtroPrecoMin)}
-            onChange={(valueString) => setFiltroPrecoMin(parseFloat(valueString.replace(/[^0-9,-]+/g,"").replace(",", ".")) || "")}
+            value={filtroPrecoMin}
+            onChange={(value) => setFiltroPrecoMin(value)}
             min={minPrecoGlobal}
             max={maxPrecoGlobal}
             step={1000}
-            className="flex-1"
+            flex="1"
           >
             <NumberInputField
-              className="bg-gray-700 text-white border-gray-600 focus:ring-red-500 focus:border-red-500"
+              bg="gray.700"
+              color="white"
+              borderColor="gray.600"
+              _focus={{ borderColor: 'red.500', boxShadow: '0 0 0 1px #E53E3E' }}
               placeholder="Mínimo"
             />
             <NumberInputStepper>
@@ -117,15 +122,18 @@ const Filtros = ({
 
           {/* Input para Preço Máximo */}
           <NumberInput
-            value={formatPrice(filtroPrecoMax)}
-            onChange={(valueString) => setFiltroPrecoMax(parseFloat(valueString.replace(/[^0-9,-]+/g,"").replace(",", ".")) || "")}
+            value={filtroPrecoMax}
+            onChange={(value) => setFiltroPrecoMax(value)}
             min={minPrecoGlobal}
             max={maxPrecoGlobal}
             step={1000}
-            className="flex-1"
+            flex="1"
           >
             <NumberInputField
-              className="bg-gray-700 text-white border-gray-600 focus:ring-red-500 focus:border-red-500"
+              bg="gray.700"
+              color="white"
+              borderColor="gray.600"
+              _focus={{ borderColor: 'red.500', boxShadow: '0 0 0 1px #E53E3E' }}
               placeholder="Máximo"
             />
             <NumberInputStepper>
@@ -139,7 +147,7 @@ const Filtros = ({
           aria-label={['min-price', 'max-price']}
           min={minPrecoGlobal}
           max={maxPrecoGlobal}
-          step={100} // Ajuste o passo conforme necessário (e.g., 100, 500, 1000)
+          step={100}
           value={[currentMinPrice, currentMaxPrice]}
           onChange={handlePriceChange}
           onChangeStart={() => {

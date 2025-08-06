@@ -1,12 +1,17 @@
 // pages/estoque.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import api from "../services/api";
 import Link from "next/link";
 
 export default function Estoque() {
   const [anuncios, setAnuncios] = useState([]);
   const [filtros, setFiltros] = useState({
-    busca: "", tipo: "", marca: "", modelo: "", ano: "", preco: ""
+    busca: "",
+    marca: "",
+    modelo: "",
+    ano: "",
+    minPreco: "", // Alterado para minPreco
+    maxPreco: ""  // Adicionado maxPreco
   });
 
   useEffect(() => {
@@ -18,51 +23,111 @@ export default function Estoque() {
         console.error("Erro ao buscar anúncios:", error);
       }
     };
-
     fetchAnuncios();
   }, []);
 
+  // ✅ NOVO: Use useMemo para extrair valores únicos para os filtros
+  const dadosParaFiltros = useMemo(() => {
+    const todasMarcas = [...new Set(anuncios.map(a => a.marca))].filter(Boolean).sort();
+    const todosModelos = [...new Set(anuncios.map(a => a.modelo))].filter(Boolean).sort();
+    const todosAnos = [...new Set(anuncios.map(a => a.ano))].filter(Boolean).sort((a, b) => b - a);
+    return { todasMarcas, todosModelos, todosAnos };
+  }, [anuncios]);
+
   const filtrados = anuncios.filter(a => {
+    const preco = parseFloat(a.preco);
+    const minPreco = parseFloat(filtros.minPreco);
+    const maxPreco = parseFloat(filtros.maxPreco);
+    
     return (
       (!filtros.busca || `${a.marca} ${a.modelo}`.toLowerCase().includes(filtros.busca.toLowerCase())) &&
-      (!filtros.tipo || a.tipo === filtros.tipo) &&
       (!filtros.marca || a.marca === filtros.marca) &&
       (!filtros.modelo || a.modelo === filtros.modelo) &&
       (!filtros.ano || a.ano === parseInt(filtros.ano)) &&
-      (!filtros.preco || (
-        filtros.preco === "1" ? a.preco <= 50000 :
-        filtros.preco === "2" ? a.preco <= 100000 : a.preco > 100000
-      )))
+      // ✅ Corrigido: Lógica para faixa de preço
+      (!filtros.minPreco || preco >= minPreco) &&
+      (!filtros.maxPreco || preco <= maxPreco)
+    );
   });
+
+  const handleClearFiltros = () => {
+    setFiltros({ busca: "", marca: "", modelo: "", ano: "", minPreco: "", maxPreco: "" });
+  };
 
   return (
     <>
-      <div className="container mx-auto px-4 py-6 lg:grid lg:grid-cols-4 gap-6">
+      <div className="container mx-auto px-4 py-6 lg:grid lg:grid-cols-4 gap-6 min-h-screen">
         {/* sidebar */}
-        <aside className="bg-neutral-800 p-4 rounded-lg text-white lg:block hidden">
+        <aside className="bg-neutral-800 p-4 rounded-lg text-white lg:block hidden sticky top-4 self-start max-h-[calc(100vh-2rem)] overflow-y-auto">
           <h2 className="text-xl font-semibold mb-4">Busca Rápida</h2>
           <input
             type="text"
             placeholder="Pesquisar..."
             className="w-full mb-4 p-2 bg-neutral-700 rounded"
             value={filtros.busca}
-            onChange={e => setFiltros(prev => ({...prev, busca: e.target.value}))}
+            onChange={e => setFiltros(prev => ({ ...prev, busca: e.target.value }))}
           />
           <h2 className="text-xl font-semibold mb-4">Filtros</h2>
-          {["tipo","marca","modelo","ano","preco"].map(key => (
-            <select
-              key={key}
-              className="w-full mb-3 p-2 bg-neutral-700 rounded"
-              value={filtros[key]}
-              onChange={e => setFiltros(prev => ({...prev, [key]: e.target.value}))}
-            >
-              <option value="">{key.charAt(0).toUpperCase()+key.slice(1)}</option>
-              {/* gerar options dinamicamente com base em anúncios */}
-            </select>
-          ))}
-          <button onClick={() => setFiltros({
-            busca:"", tipo:"", marca:"", modelo:"", ano:"", preco:""
-          })} className="mt-2 underline">Limpar filtros</button>
+          
+          {/* ✅ Corrigido: Filtro de Marca */}
+          <select
+            className="w-full mb-3 p-2 bg-neutral-700 rounded"
+            value={filtros.marca}
+            onChange={e => setFiltros(prev => ({...prev, marca: e.target.value}))}
+          >
+            <option value="">Marca</option>
+            {dadosParaFiltros.todasMarcas.map(marca => (
+              <option key={marca} value={marca}>{marca}</option>
+            ))}
+          </select>
+
+          {/* ✅ Corrigido: Filtro de Modelo */}
+          <select
+            className="w-full mb-3 p-2 bg-neutral-700 rounded"
+            value={filtros.modelo}
+            onChange={e => setFiltros(prev => ({...prev, modelo: e.target.value}))}
+          >
+            <option value="">Modelo</option>
+            {dadosParaFiltros.todosModelos.map(modelo => (
+              <option key={modelo} value={modelo}>{modelo}</option>
+            ))}
+          </select>
+
+          {/* ✅ Corrigido: Filtro de Ano */}
+          <select
+            className="w-full mb-3 p-2 bg-neutral-700 rounded"
+            value={filtros.ano}
+            onChange={e => setFiltros(prev => ({...prev, ano: e.target.value}))}
+          >
+            <option value="">Ano</option>
+            {dadosParaFiltros.todosAnos.map(ano => (
+              <option key={ano} value={ano}>{ano}</option>
+            ))}
+          </select>
+
+          {/* ✅ NOVO: Filtros de Preço Mínimo e Máximo */}
+          <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-300">Preço Mínimo</label>
+              <input
+                  type="number"
+                  placeholder="R$ Mínimo"
+                  className="w-full p-2 bg-neutral-700 rounded mt-1"
+                  value={filtros.minPreco}
+                  onChange={e => setFiltros(prev => ({...prev, minPreco: e.target.value}))}
+              />
+          </div>
+          <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-300">Preço Máximo</label>
+              <input
+                  type="number"
+                  placeholder="R$ Máximo"
+                  className="w-full p-2 bg-neutral-700 rounded mt-1"
+                  value={filtros.maxPreco}
+                  onChange={e => setFiltros(prev => ({...prev, maxPreco: e.target.value}))}
+              />
+          </div>
+          
+          <button onClick={handleClearFiltros} className="mt-2 underline">Limpar filtros</button>
         </aside>
         
         {/* grid anúncios */}
@@ -71,7 +136,8 @@ export default function Estoque() {
             <div key={a._id} className="bg-neutral-800 rounded-lg shadow overflow-hidden hover:shadow-xl">
               {a.fotos?.[0] && (
                 <img
-                  src={`${process.env.NEXT_PUBLIC_API_URL.replace('/api','')}${a.fotos[0]}`}
+                  // ✅ CORRIGIDO: Usando NEXT_PUBLIC_UPLOAD_URL ou o caminho correto
+                  src={`${process.env.NEXT_PUBLIC_UPLOAD_URL}${a.fotos[0]}`}
                   alt={a.modelo}
                   className="w-full h-48 object-cover"
                 />
@@ -81,7 +147,7 @@ export default function Estoque() {
                 <p className="text-brand-500 mt-1 font-bold">
                   {a.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                 </p>
-                <p className="text-neutral-400 mt-1">{a.ano} • {a.km} km</p>
+                <p className="text-neutral-400 mt-1">{a.ano} • {a.km} km</p>
                 <Link href={`/anuncio/${a._id}`} className="mt-4 inline-block px-4 py-2 bg-brand-500 text-white rounded hover:bg-brand-600">
                   Ver mais
                 </Link>

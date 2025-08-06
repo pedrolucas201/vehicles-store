@@ -2,8 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/estoque": "pages/estoque.js",
-  "/quemsomos": "pages/quemsomos.js",
   "/": "pages/index.js",
-  "/contato": "pages/contato.js"
+  "/estoque": "pages/estoque.js",
+  "/quemsomos": "pages/quemsomos.js"
 }
