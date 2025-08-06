@@ -59,7 +59,7 @@ const Filtros = ({
           <Select
             placeholder="Todas as marcas"
             onChange={(e) => setFiltroMarca(e.target.value)}
-            className="bg-gray-700 text-white border-gray-600 hover:border-blue-500 focus:ring-blue-500 focus:border-blue-500"
+            className="bg-gray-700 text-white border-gray-600 hover:border-red-500 focus:ring-red-500 focus:border-red-500"
             color="white"
             _placeholder={{ color: 'gray.400' }}
           >
@@ -77,7 +77,7 @@ const Filtros = ({
           <Select
             placeholder="Todos os anos"
             onChange={(e) => setFiltroAno(e.target.value)}
-            className="bg-gray-700 text-white border-gray-600 hover:border-blue-500 focus:ring-blue-500 focus:border-blue-500"
+            className="bg-gray-700 text-white border-gray-600 hover:border-red-500 focus:ring-red-500 focus:border-red-500"
             color="white"
             _placeholder={{ color: 'gray.400' }}
           >
@@ -104,7 +104,7 @@ const Filtros = ({
             className="flex-1"
           >
             <NumberInputField
-              className="bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+              className="bg-gray-700 text-white border-gray-600 focus:ring-red-500 focus:border-red-500"
               placeholder="Mínimo"
             />
             <NumberInputStepper>
@@ -125,7 +125,7 @@ const Filtros = ({
             className="flex-1"
           >
             <NumberInputField
-              className="bg-gray-700 text-white border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+              className="bg-gray-700 text-white border-gray-600 focus:ring-red-500 focus:border-red-500"
               placeholder="Máximo"
             />
             <NumberInputStepper>
@@ -153,11 +153,11 @@ const Filtros = ({
           mt={4}
         >
           <RangeSliderTrack bg="gray.600">
-            <RangeSliderFilledTrack bg="blue.500" />
+            <RangeSliderFilledTrack bg="red.500" />
           </RangeSliderTrack>
           <Tooltip
             hasArrow
-            bg="blue.500"
+            bg="red.500"
             color="white"
             placement="top"
             isOpen={showTooltipMin}
@@ -167,7 +167,7 @@ const Filtros = ({
           </Tooltip>
           <Tooltip
             hasArrow
-            bg="blue.500"
+            bg="red.500"
             color="white"
             placement="top"
             isOpen={showTooltipMax}

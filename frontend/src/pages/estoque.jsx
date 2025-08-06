@@ -9,7 +9,18 @@ export default function Estoque() {
     busca: "", tipo: "", marca: "", modelo: "", ano: "", preco: ""
   });
 
-  useEffect(() => api.get("/anuncios").then(res => setAnuncios(res.data)), []);
+  useEffect(() => {
+    const fetchAnuncios = async () => {
+      try {
+        const res = await api.get("/anuncios");
+        setAnuncios(res.data);
+      } catch (error) {
+        console.error("Erro ao buscar anúncios:", error);
+      }
+    };
+
+    fetchAnuncios();
+  }, []);
 
   const filtrados = anuncios.filter(a => {
     return (

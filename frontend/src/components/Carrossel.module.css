@@ -1,0 +1,28 @@
+/* Estilos para o carrossel. O ".slick-dots" é uma classe global do react-slick */
+/* Ele precisa ser acessado globalmente usando ":global(.slick-dots)" ou "div :global(.slick-dots)" */
+
+.customDotsContainer :global(.slick-dots) {
+    bottom: 1rem;
+    display: flex !important;
+    justify-content: center;
+    width: 100%;
+}
+
+.customDotsContainer :global(.slick-dots li) {
+    margin: 0 4px;
+}
+
+.customDotsContainer :global(.slick-dots li button:before) {
+    font-size: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 9999px;
+    width: 10px;
+    height: 10px;
+    content: '';
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.customDotsContainer :global(.slick-dots li.slick-active button:before) {
+    background-color: white;
+}

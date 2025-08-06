@@ -12,7 +12,7 @@ import "slick-carousel/slick/slick-theme.css";
 function PrevArrow({ className, style, onClick }) {
   return (
     <button
-      className={`${className} absolute top-1/2 left-4 transform -translate-y-1/2 z-10 bg-neutral-800/60 p-2 rounded-full hover:bg-neutral-800/90 transition-colors`}
+      className={`${className} absolute top-1/2 left-4 transform -translate-y-1/2 z-10 bg-neutral-800/60 p-2 rounded-full hover:bg-neutral-800/90 transition-colors opacity-0 group-hover:opacity-100 duration-300`}
       style={{ ...style }}
       onClick={onClick}
       aria-label="Anterior"
@@ -26,7 +26,7 @@ function PrevArrow({ className, style, onClick }) {
 function NextArrow({ className, style, onClick }) {
   return (
     <button
-      className={`${className} absolute top-1/2 right-4 transform -translate-y-1/2 z-10 bg-neutral-800/60 p-2 rounded-full hover:bg-neutral-800/90 transition-colors`}
+      className={`${className} absolute top-1/2 right-4 transform -translate-y-1/2 z-10 bg-neutral-800/60 p-2 rounded-full hover:bg-neutral-800/90 transition-colors opacity-0 group-hover:opacity-100 duration-300`}
       style={{ ...style }}
       onClick={onClick}
       aria-label="Próximo"
@@ -44,43 +44,45 @@ export default function Carrossel({ slides = [] }) {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    adaptiveHeight: true,
+    adaptiveHeight: false,
     lazyLoad: 'ondemand',
     autoplay: true,
     autoplaySpeed: 4000,
     pauseOnHover: true,
     prevArrow: <PrevArrow />,
     nextArrow: <NextArrow />,
-    // Customiza a aparência dos pontos de paginação
+    // Customiza a aparência dos pontos de paginação e garante visibilidade
     appendDots: dots => (
-      <div>
-        <ul className="m-0 bottom-[-25px]">{dots}</ul>
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-full text-center">
+        <ul className="flex justify-center m-5 p-2 rounded-full bg-black/30 w-fit mx-auto space-x-3">
+          {dots}
+        </ul>
       </div>
     ),
+    customPaging: i => (
+      // Agora o ponto é um <div> com um estilo mais claro
+      <div className="w-2.5 h-2.5 bg-white/50 rounded-full mx-auto mb-10 hover:bg-white transition-colors"></div>
+    )
   };
   
-  // URL base da API para as imagens
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL.replace('/api', '');
-
   // Não renderiza o carrossel se não houver slides
   if (slides.length === 0) {
     return null;
   }
 
   return (
-    <div className="relative mb-12 w-full h-[350px] sm:h-[500px] md:h-[650px] rounded-lg overflow-hidden group">
+    <div className="relative mb-12 w-full rounded-lg overflow-hidden group">
       <Slider {...settings}>
         {slides.map((fotoUrl, i) => (
-          <div key={i} className="relative w-full h-[350px] sm:h-[500px] md:h-[650px]">
+          <div key={i} className="relative w-full aspect-[21/9]">
             <Image
               src={fotoUrl.image}
               alt={fotoUrl.title}
               layout="fill"
               objectFit="cover"
-              priority={i === 0} // Carrega a primeira imagem com prioridade
+              priority={i === 0}
               className="transition-transform duration-500 group-hover:scale-105"
             />
-             {/* Overlay para escurecer a imagem e melhorar a legibilidade dos controles */}
             <div className="absolute inset-0 bg-black/10"></div>
           </div>
         ))}

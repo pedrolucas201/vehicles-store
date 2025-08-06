@@ -10,7 +10,12 @@ import Filtros from "../components/Filtros";
 import { useTheme } from "@chakra-ui/react";
 import { useAuth } from "../hooks/useAuth";
 
-// Hooks
+// Imagens do Carrossel
+import imagem1 from '../assets/moto1.jpg';
+import imagem2 from '../assets/moto2.jpg';
+import imagem3 from '../assets/moto3.jpg';
+
+
 
 export default function Home() {
 
@@ -36,7 +41,7 @@ export default function Home() {
   // Estados de controle da UI
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const isAdmin = useAuth;
+  const {isAdmin} = useAuth;
 
   // Valores globais de preço para o slider (min e max de todos os anúncios)
   // Usamos useMemo para garantir que eles sejam calculados apenas quando 'anuncios' muda.
@@ -126,46 +131,37 @@ export default function Home() {
   };
 
   const slides = useMemo(() => {
-    if (anuncios.length === 0) {
-      return [];
-    }
 
-    return anuncios
-      .slice(0, 5)
-      .map((anuncio) => {
-        const imagePath =
-          anuncio.fotos && anuncio.fotos.length > 0 ? anuncio.fotos[0] : null;
+    const imagensFixas = [
+      {
+        id: 'destaque-1',
+        image: imagem1.src,
+        title: 'Destaque da Semana',
+        description: 'Condições especiais de financiamento',
+        link: '/estoque',
+      },
+      {
+        id: 'destaque-2',
+        image: imagem2.src,
+        title: 'Novidades no Estoque',
+        description: 'Confira nossos últimos modelos',
+        link: '/estoque',
+      },
+      {
+        id: 'destaque-3',
+        image: imagem3.src,
+        title: 'Seu próximo veículo está aqui!',
+        description: 'Encontre o carro dos seus sonhos',
+        link: '/estoque',
+      },
+    ];
 
-        const fullImageUrl = imagePath
-          ? `${process.env.NEXT_PUBLIC_UPLOAD_URL}${imagePath}`
-          : "/placeholder.jpg";
-
-        if (typeof fullImageUrl !== "string") {
-          console.error(
-            "Constructed image URL is not a string:",
-            fullImageUrl,
-            "from anuncio:",
-            anuncio
-          );
-          return null;
-        }
-
-        return {
-          id: anuncio._id,
-          image: fullImageUrl,
-          title: anuncio.modelo || "Veículo",
-          description: `Ano: ${
-            anuncio.ano
-          } - Preço: R$ ${anuncio.preco.toLocaleString("pt-BR")}`,
-          link: `/anuncio/${anuncio._id}`,
-        };
-      })
-      .filter(Boolean);
-  }, [anuncios]);
+    return imagensFixas;
+  }, []); 
 
   return (
     <>
-      {slides.length > 0 && <Carrossel slides={slides} />}
+      {<Carrossel slides={slides} />}
 
       <div className="container mx-auto p-6 text-white">
         <h1 className="text-3xl font-bold mb-4">Veículos Disponíveis</h1>

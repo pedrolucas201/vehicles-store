@@ -14,38 +14,49 @@ function Dashboard() {
   const [marcas, setMarcas] = useState([]);
   const [anos, setAnos] = useState([]);
 
-  useEffect(() => {
-    async function fetchAnuncios() {
-      const token = localStorage.getItem("token");
+useEffect(() => {
+  const fetchAnuncios = async () => {
+    const token = localStorage.getItem("token");
 
-      if (!token) {
-        console.log("Dashboard: Token ausente, redirecionando para /login.");
-        router.push("/login");
-        return;
-      }
-
-      api.defaults.headers.Authorization = `Bearer ${token}`;
-      try {
-        const res = await api.get("/anuncios"); // Use await aqui
-        setAnuncios(res.data);
-
-        const marcasUnicas = [...new Set(res.data.map((a) => a.marca))];
-        const anosUnicos = [...new Set(res.data.map((a) => a.ano))].sort((a, b) => b - a);
-        setMarcas(marcasUnicas);
-        setAnos(anosUnicos);
-        console.log("Dashboard: Anúncios carregados com sucesso.");
-      } catch (error) {
-        console.error("Dashboard: Erro ao carregar anúncios:", error);
-        if (error.response && error.response.status === 401) { 
-          localStorage.removeItem('token'); 
-          router.push("/login"); 
-        }
-      }
+    if (!token) {
+      console.warn("Dashboard: Token ausente, redirecionando para /login.");
+      router.push("/login");
+      return;
     }
 
-    fetchAnuncios();
+    // Configura o header do token
+    api.defaults.headers.Authorization = `Bearer ${token}`;
 
-  }, []); 
+    try {
+      const res = await api.get("/anuncios");
+      const anuncios = res.data;
+
+      setAnuncios(anuncios);
+
+      // Marcas únicas em ordem alfabética
+      const marcasUnicas = [...new Set(anuncios.map((a) => a.marca))].sort();
+      setMarcas(marcasUnicas);
+
+      // Anos únicos em ordem decrescente
+      const anosUnicos = [...new Set(anuncios.map((a) => a.ano))].sort((a, b) => b - a);
+      setAnos(anosUnicos);
+
+      console.log("Dashboard: Anúncios carregados com sucesso.");
+    } catch (error) {
+      console.error("Dashboard: Erro ao carregar anúncios:", error);
+
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+        router.push("/login");
+      } else {
+        // Mensagem de erro genérica, opcional
+        alert("Erro ao carregar anúncios. Tente novamente mais tarde.");
+      }
+    }
+  };
+
+  fetchAnuncios();
+}, []);
 
   // Aplicar os filtros
   const anunciosFiltrados = anuncios.filter((a) => {

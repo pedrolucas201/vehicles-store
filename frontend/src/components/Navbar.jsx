@@ -13,8 +13,8 @@ export default function Navbar({ isAdmin }) {
   const publicLinks = [
     { href: '/', label: 'Início' },
     { href: '/estoque', label: 'Estoque' },
-    { href: '/vender', label: 'Venda seu veículo' },
-    { href: '/financiamento', label: 'Financiamento' },
+    // { href: '/vender', label: 'Venda seu veículo' },
+    // { href: '/financiamento', label: 'Financiamento' },
     { href: '/quemsomos', label: 'Quem Somos' },
     { href: '/contato', 'label': 'Contato' },
   ];

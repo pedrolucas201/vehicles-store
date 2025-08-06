@@ -1,0 +1,29 @@
+/* Sobrescreve o estilo padrão do react-slick */
+.slick-dots {
+    bottom: 1rem; /* Posiciona a lista de pontos 1rem acima da base do carrossel */
+    display: flex !important; /* Garante que a lista seja um flexbox para centralizar */
+    justify-content: center;
+    width: 100%;
+}
+
+/* Garante que os itens da lista sejam alinhados corretamente */
+.slick-dots li {
+    margin: 0 4px; /* Adiciona um pequeno espaço entre os pontos */
+}
+
+/* Estilo para os pontos inativos */
+.slick-dots li button:before {
+    font-size: 0; /* Oculta o conteúdo padrão do botão */
+    background-color: rgba(255, 255, 255, 0.5); /* Cor semi-transparente */
+    border-radius: 9999px; /* Transforma em um círculo */
+    width: 10px;
+    height: 10px;
+    content: '';
+    display: block;
+    transition: all 0.3s ease;
+}
+
+/* Estilo para o ponto ativo */
+.slick-dots li.slick-active button:before {
+    background-color: white; /* Cor completamente branca para o ponto ativo */
+}
