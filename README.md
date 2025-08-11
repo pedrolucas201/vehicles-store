@@ -1,93 +1,77 @@
 ![União Motos](https://github.com/pedrolucas201/uniao-motos/blob/main/frontend/src/assets/Captura%20de%20Tela%202025-08-11%20a%CC%80s%2016.05.56.png)
 
-# União Motos
+### \# União Motos
 
-Este projeto é uma plataforma para venda de veículos que oferece ferramentas para empresas do setor automotivo gerenciarem seus anúncios de forma eficiente. A aplicação possui dashboards customizadas que permitem a gestão completa do catálogo de veículos, além de funcionalidades extras para auxiliar tanto a empresa quanto o cliente final, como um simulador de financiamento.
+> Este projeto é uma plataforma para **venda de veículos** que otimiza a gestão de anúncios para empresas do setor automotivo. Desenvolvido com uma arquitetura full-stack, o sistema oferece dashboards completas e ferramentas como um simulador de financiamento.
 
-Tecnologias Utilizadas
-O projeto foi desenvolvido como uma aplicação full-stack.
+-----
 
-Frontend: JavaScript, TailwindCSS, ChackraUI.
+### 🚀 Funcionalidades Principais
 
-Linguagem: JavaScript
+A plataforma conta com dashboards específicas para usuários do tipo **Empresa**, incluindo:
 
-Gerenciador de Pacotes: npm
+  - **Gerenciamento de Anúncios:**
 
-Backend:
+      - ➕ **Crie, Edite e Exclua** anúncios de veículos de forma intuitiva.
+      - 📝 **Edição Detalhada**: Gerencie todas as informações do veículo, como marca, modelo, ano, preço e fotos.
+      - 🔍 **Visualização do Anúncio**: Pré-visualize os anúncios para garantir que a apresentação está impecável.
 
-A arquitetura é de um servidor que se comunica com o frontend para gerenciar os dados da aplicação.
+  - **Módulos Extras:**
 
-Funcionalidades
-A plataforma oferece dashboards específicas para o usuário do tipo: empresas.
+      - 💰 **Simulador de Financiamento**: Uma ferramenta interativa para os clientes calcularem as condições de financiamento.
+      - 🔄 **Venda de Veículo**: Funcionalidade que permite que clientes ofereçam seus veículos para a empresa.
 
-Dashboard para Empresas:
+-----
 
-Gerenciamento de Entregas: Editar e excluir veículos cadastradas.
+### 🛠️ Tecnologias Utilizadas
 
-Edição de Anúncio: Gerenciar informações do veículo.
+  - **Frontend:**
+      - **Linguagens:** HTML, CSS, JavaScript
+      - **Gerenciador de Pacotes:** `npm` / `yarn`
+  - **Backend:**
+      - **Banco de Dados:** **MongoDB**, garantindo flexibilidade e escalabilidade.
 
-Visualização do Anúncio: Ver todas as informações disponíveis.
+-----
 
-Módulos Extras:
+### ⚙️ Como Executar o Projeto
 
-Simulador de Financiamento: Uma ferramenta para que os clientes possam simular condições de financiamento diretamente na plataforma.
-
-Venda de Veículo (cliente para empresa): Um módulo que facilita o processo de um cliente oferecer seu veículo para a empresa.
-
-Como Executar o Projeto
 Siga os passos abaixo para rodar o projeto localmente:
 
-1. Clone o repositório:
+1.  **Clone o repositório:**
 
-Bash
+    ```bash
+    git clone https://github.com/pedrolucas201/uniao-motos.git
+    ```
 
-git clone https://github.com/pedrolucas201/uniao-motos.git
+2.  **Configure o Banco de Dados:**
 
-2. Configure o Banco de Dados:
+      - Instale e inicie o **MongoDB**.
+      - Crie um banco de dados para o projeto.
+      - Configure a string de conexão no arquivo de ambiente do backend.
 
-Certifique-se de ter o MongoDB instalado e em execução.
+3.  **Inicie o Frontend:**
 
-Crie uma base de dados para o projeto.
+    ```bash
+    # Navegue até a pasta do frontend
+    cd uniao-motos/frontend
+    # Instale as dependências
+    npm install
+    # Inicie a aplicação
+    npm start
+    ```
 
-No arquivo de configuração do backend, defina a string de conexão com o seu banco de dados local.
+4.  **Inicie o Backend:**
 
-3. Navegue para a pasta do frontend:
+    ```bash
+    # Navegue até a pasta do backend
+    cd ../backend
+    # Instale as dependências
+    npm install
+    # Inicie o servidor
+    npm start
+    ```
 
-Bash
+-----
 
-cd uniao-motos/frontend
-
-4. Instale as dependências:
-
-Bash
-
-npm install
-
-5. Inicie a aplicação:
-
-Bash
-
-npm run dev
-
-O projeto será executado em http://localhost:3000.
-
-6. Navegue para a pasta do backend:
-
-Bash
-
-cd ../backend
-Instale as dependências:
-
-Bash
-
-npm install
-
-Configure seu Banco de Dados
-
-Inicie a aplicação:
-
-Bash
-
-npm run dev
 
 
