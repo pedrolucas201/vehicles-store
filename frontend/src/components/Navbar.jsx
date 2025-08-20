@@ -29,7 +29,7 @@ export default function Navbar({ isAdmin }) {
     <nav className="bg-neutral-900 shadow-md border-b border-brand-700">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* O link para a home page ou dashboard pode ser ajustado aqui */}
-        <Link href="/" className="text-white text-2xl font-bold">União Motos</Link> {/* Mudei para "/" para a home page por padrão */}
+        <Link href="/" className="text-white text-2xl font-bold">Loja de Veículos</Link> {/* Mudei para "/" para a home page por padrão */}
         
         <button
           className="text-white md:hidden focus:outline-none" // Adicionado focus:outline-none para acessibilidade

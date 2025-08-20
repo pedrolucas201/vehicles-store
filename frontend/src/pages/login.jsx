@@ -33,7 +33,7 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold mb-6 text-center text-white">União Motos</h1> {/* Adicionei text-white */}
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">Loja de Veículos</h1> {/* Adicionei text-white */}
         <form onSubmit={handleSubmit}>
           <label className="block mb-2 text-sm text-neutral-300">Email</label>
           <input
